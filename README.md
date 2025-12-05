@@ -100,7 +100,50 @@ src/
 - 🥃 **Cubata** (Dirección Modbus: 102)
 - 🧊 **Whiskey on the Rocks** (Dirección Modbus: 103)
 - 🥤 **Whiskey and Coke** (Dirección Modbus: 104)
-- 🍸 **Whiskey Highball** (Dirección Modbus: 106)
+- 🍸 **Whiskey Highball** (Dirección Modbus: 105)
+- ✨ **Personalizar tu trago** (Dirección Modbus: 106)
+
+### Direcciones Modbus - Ingredientes
+
+| Ingrediente | Dirección | Descripción |
+|------------|-----------|-------------|
+| Mint | 132 | Hojas de menta |
+| Muddling | 133 | Macerar (automático con mint) |
+| Ice | 134 | Hielo |
+| Syrup | 135 | Jarabe |
+| Lime | 136 | Lima |
+| White Rum | 137 | Ron blanco |
+| Dark Rum | 138 | Ron oscuro |
+| Whiskey | 139 | Whisky |
+| Soda | 140 | Soda |
+| Coke | 141 | Coca-Cola |
+| Stirring | 142 | Revolver (automático con soda/coke) |
+| Straw | 143 | Pajita (automático con soda/coke) |
+
+### Flujo de preparación
+
+**Tragos predefinidos:**
+1. Usuario selecciona un cóctel (ej: Mojito)
+2. Sistema escribe en todas las direcciones de ingredientes de la receta
+3. Sistema escribe en la dirección del trago (100-105)
+4. Sistema escribe en la dirección 96 (Start Signal)
+5. Robot prepara el cóctel
+
+**Trago personalizado:**
+1. Usuario selecciona ingredientes (máx 2 alcoholes, 1 mixer)
+2. Sistema escribe en las direcciones de cada ingrediente seleccionado
+3. Sistema automáticamente agrega:
+   - Muddling (133) si hay Mint
+   - Stirring (142) y Straw (143) si hay Soda o Coke
+4. Sistema escribe en la dirección 106 (Custom)
+5. Sistema escribe en la dirección 96 (Start Signal)
+6. Robot prepara el trago personalizado
+
+### Restricciones de personalización
+
+- **Alcoholes:** Máximo 2 (White Rum, Dark Rum o Whiskey)
+- **Mixers:** Máximo 1 (Soda o Coke)
+- **Otros:** Sin límite (Mint, Ice, Syrup, Lime)
 
 ## Troubleshooting
 

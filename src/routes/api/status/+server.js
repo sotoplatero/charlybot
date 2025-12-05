@@ -11,60 +11,62 @@ async function readRobotState(client) {
 	const state = {};
 
 	try {
-		// Read step states in one batch (addresses 32-40: 9 consecutive addresses)
-		let stepStates;
-		try {
-			stepStates = await client.readDiscreteInputs(32, 9);
-		} catch (readError) {
-			// If discrete inputs fail, try coils
-			if (readError.modbusCode === 2 || readError.modbusCode === 1) {
-				stepStates = await client.readCoils(32, 9);
-			} else {
-				throw readError;
-			}
-		}
+		// Read step states in one batch (addresses 32-41: 10 consecutive addresses)
+		// All variables are COILS in RobotStudio
+		console.log('[Status] Reading step states (32-41) as coils...');
+		let stepStates = await client.readCoils(32, 10);
+		console.log('[Status] Step states read successfully');
 
-		// Map step states to keys
-		state.muddling = stepStates.data[0] === true;
-		state.syrup = stepStates.data[1] === true;
-		state.lime = stepStates.data[2] === true;
-		state.ice = stepStates.data[3] === true;
-		state.whiteRum = stepStates.data[4] === true;
-		state.darkRum = stepStates.data[5] === true;
-		state.soda = stepStates.data[6] === true;
-		state.coke = stepStates.data[7] === true;
-		state.whiskey = stepStates.data[8] === true;
+		// Map step states to keys (according to Modbus table)
+		state.mint = stepStates.data[0] === true;        // Address 32
+		state.muddling = stepStates.data[1] === true;    // Address 33
+		state.ice = stepStates.data[2] === true;         // Address 34
+		state.syrup = stepStates.data[3] === true;       // Address 35
+		state.lime = stepStates.data[4] === true;        // Address 36
+		state.whiteRum = stepStates.data[5] === true;    // Address 37
+		state.darkRum = stepStates.data[6] === true;     // Address 38
+		state.whiskey = stepStates.data[7] === true;     // Address 39
+		state.soda = stepStates.data[8] === true;        // Address 40
+		state.coke = stepStates.data[9] === true;        // Address 41
+
+		// Log which steps are active
+		const activeSteps = [];
+		if (state.mint) activeSteps.push('mint(32)');
+		if (state.muddling) activeSteps.push('muddling(33)');
+		if (state.ice) activeSteps.push('ice(34)');
+		if (state.syrup) activeSteps.push('syrup(35)');
+		if (state.lime) activeSteps.push('lime(36)');
+		if (state.whiteRum) activeSteps.push('whiteRum(37)');
+		if (state.darkRum) activeSteps.push('darkRum(38)');
+		if (state.whiskey) activeSteps.push('whiskey(39)');
+		if (state.soda) activeSteps.push('soda(40)');
+		if (state.coke) activeSteps.push('coke(41)');
+		console.log(`[Status] Active steps: ${activeSteps.length > 0 ? activeSteps.join(', ') : 'none'}`);
 
 	} catch (stepError) {
 		// Silently set defaults on error to avoid spam
 		if (!stepError.message.includes('Timed out')) {
-			console.warn('[Modbus] Could not read step states (32-40):', stepError.message);
+			console.warn('[Modbus] Could not read step states (32-41):', stepError.message);
 		}
 		// Set all step states to false on error
+		state.mint = false;
 		state.muddling = false;
+		state.ice = false;
 		state.syrup = false;
 		state.lime = false;
-		state.ice = false;
 		state.whiteRum = false;
 		state.darkRum = false;
+		state.whiskey = false;
 		state.soda = false;
 		state.coke = false;
-		state.whiskey = false;
 	}
 
 	try {
 		// Read system states in one batch (addresses 90-92: 3 consecutive addresses)
-		let systemStates;
-		try {
-			systemStates = await client.readDiscreteInputs(90, 3);
-		} catch (readError) {
-			// If discrete inputs fail, try coils
-			if (readError.modbusCode === 2 || readError.modbusCode === 1) {
-				systemStates = await client.readCoils(90, 3);
-			} else {
-				throw readError;
-			}
-		}
+		// All variables are COILS in RobotStudio
+		console.log('[Status] Reading system states (90-92) as coils...');
+		let systemStates = await client.readCoils(90, 3);
+		console.log('[Status] System states read successfully');
 
 		// Map system states to keys
 		state.cupHolder = systemStates.data[0] === true;
@@ -85,7 +87,10 @@ async function readRobotState(client) {
 /** @type {import('./$types').RequestHandler} */
 export async function GET() {
 	try {
+		console.log('[Status] Polling robot state...');
+
 		if (!isConnected()) {
+			console.log('[Status] Not connected, returning default state');
 			return json({
 				isConnected: false,
 				robotState: getDefaultState(),
@@ -96,9 +101,11 @@ export async function GET() {
 		const client = await getModbusClient();
 
 		// Read state addresses using discrete inputs or coils (not holding registers)
-		// Step addresses: 32-40 (9 addresses)
+		// Step addresses: 32-41 (10 addresses)
 		// System addresses: 90-92 (3 addresses)
 		const robotState = await readRobotState(client);
+
+		console.log(`[Status] State read - drinkReady: ${robotState.drinkReady ? 1 : 0}, waitingRecipe: ${robotState.waitingRecipe ? 1 : 0}`);
 
 		return json({
 			isConnected: true,
@@ -122,17 +129,18 @@ export async function GET() {
 
 function getDefaultState() {
 	return {
-		muddling: false,
-		syrup: false,
-		lime: false,
-		ice: false,
-		whiteRum: false,
-		darkRum: false,
-		soda: false,
-		coke: false,
-		whiskey: false,
-		cupHolder: false,
-		drinkReady: false,
-		waitingRecipe: false
+		mint: false,         // Address 32
+		muddling: false,     // Address 33
+		ice: false,          // Address 34
+		syrup: false,        // Address 35
+		lime: false,         // Address 36
+		whiteRum: false,     // Address 37
+		darkRum: false,      // Address 38
+		whiskey: false,      // Address 39
+		soda: false,         // Address 40
+		coke: false,         // Address 41
+		cupHolder: false,    // Address 90
+		drinkReady: false,   // Address 91
+		waitingRecipe: false // Address 92
 	};
 }

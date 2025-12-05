@@ -9,6 +9,13 @@
   --animation-scale-in: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   --font-family-display: "Bebas Neue", sans-serif;
   --font-family-body: "Inter", sans-serif;
+
+  /* KRKA Brand Colors */
+  --color-krka-cyan: #00B4D8;
+  --color-krka-teal: #0A9396;
+  --color-krka-light-cyan: #90E0EF;
+  --color-krka-dark-teal: #005F73;
+  --color-krka-accent: #0DCAF0;
 }
 
 /* Light Theme - Based on #1ABBB4 */
@@ -145,11 +152,33 @@
 
 * {
   font-family: var(--font-family-body);
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-display);
   letter-spacing: 0.05em;
+}
+
+/* Tablet optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch-friendly tap targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection on tap */
+  * {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow text selection in inputs */
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
 }
 
 .glass-shimmer {
@@ -170,7 +199,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-krka-cyan) 0%, var(--color-krka-teal) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -182,6 +211,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-glow:hover {
-  box-shadow: 0 8px 40px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 40px rgba(0, 180, 216, 0.3);
   transform: translateY(-4px);
+}
+
+.krka-gradient-bg {
+  background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 50%, #80DEEA 100%);
+}
+
+.krka-accent-gradient {
+  background: linear-gradient(135deg, var(--color-krka-cyan) 0%, var(--color-krka-teal) 100%);
 }

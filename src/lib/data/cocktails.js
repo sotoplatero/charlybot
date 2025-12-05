@@ -24,13 +24,14 @@ export const cocktails = [
 		modbusAddress: 100,
 		category: 'rum',
 		steps: [
-			{ label: 'Muddling', stateKey: 'muddling', description: 'Pick and place mint leaves and muddle it' },
-			{ label: 'Pouring Syrup', stateKey: 'syrup', description: 'Pouring syrup into a glass' },
-			{ label: 'Adding Lime', stateKey: 'lime', description: 'Pouring lime into a glass' },
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring White Rum', stateKey: 'whiteRum', description: 'Pouring white rum into a glass' },
-			{ label: 'Adding Soda', stateKey: 'soda', description: 'Pouring soda into a glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
+			{ label: 'Placing Mint', stateKey: 'mint', description: 'Placing mint leaves in the glass' }, // 32
+			{ label: 'Muddling', stateKey: 'muddling', description: 'Muddling the mint leaves' }, // 33
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Pouring Syrup', stateKey: 'syrup', description: 'Pouring syrup into a glass' }, // 35
+			{ label: 'Adding Lime', stateKey: 'lime', description: 'Pouring lime into a glass' }, // 36
+			{ label: 'Pouring White Rum', stateKey: 'whiteRum', description: 'Pouring white rum into a glass' }, // 37
+			{ label: 'Adding Soda', stateKey: 'soda', description: 'Pouring soda into a glass' }, // 40
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	},
 	{
@@ -40,73 +41,73 @@ export const cocktails = [
 		modbusAddress: 101,
 		category: 'rum',
 		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring White Rum', stateKey: 'whiteRum', description: 'Pouring white rum into the glass' },
-			{ label: 'Adding Lime', stateKey: 'lime', description: 'Pouring lime into a glass' },
-			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Adding Lime', stateKey: 'lime', description: 'Pouring lime into a glass' }, // 36
+			{ label: 'Pouring White Rum', stateKey: 'whiteRum', description: 'Pouring white rum into the glass' }, // 37
+			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' }, // 41
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	},
 	{
 		id: 'cubata',
 		name: 'Cubata',
-		imageUrl: 'https://www.liquor.com/thmb/iIWYL80vVTGGGLjs6vMTQUk8w1o=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/__opt__aboutcom__coeus__resources__content_migration__liquor__2018__01__02105149__Cuba-Libre-720x720-recipe-673b48bbef034d89b6b5149b8417c7d5.jpg',
+		imageUrl: 'https://www.thecocktaildb.com/images/media/drink/rw8cw21582485096.jpg',
 		modbusAddress: 102,
 		category: 'rum',
 		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring Dark Rum', stateKey: 'darkRum', description: 'Pouring dark rum into the glass' },
-			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Pouring Dark Rum', stateKey: 'darkRum', description: 'Pouring dark rum into the glass' }, // 38
+			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' }, // 41
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	},
 	{
 		id: 'whiskey-rocks',
 		name: 'Whiskey on the Rocks',
-		imageUrl: 'https://www.foodandwine.com/thmb/SWVtJBCoYwwBmhAGHmhwsBSjeTs=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/old-fashioned-FT-RECIPE0824-8389f49dc5f54ca7a0b3223087698e82.jpeg',
+		imageUrl: 'https://www.thecocktaildb.com/images/media/drink/rtpxqw1468877562.jpg',
 		modbusAddress: 103,
 		category: 'whiskey',
 		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' }, // 39
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
+		]
+	},
+	{
+		id: 'neat-whiskey',
+		name: 'Neat Whiskey',
+		imageUrl: 'https://www.thecocktaildb.com/images/media/drink/5s22081504883416.jpg',
+		modbusAddress: 104,
+		category: 'whiskey',
+		steps: [
+			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' }, // 39
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
+		]
+	},
+	{
+		id: 'whiskey-highball',
+		name: 'Whiskey Highball',
+		imageUrl: 'https://www.thecocktaildb.com/images/media/drink/n0sx531504372951.jpg',
+		modbusAddress: 105,
+		category: 'whiskey',
+		steps: [
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' }, // 39
+			{ label: 'Adding Soda', stateKey: 'soda', description: 'Pouring soda into the glass' }, // 40
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	},
 	{
 		id: 'whiskey-coke',
 		name: 'Whiskey and Coke',
-		imageUrl: 'https://www.liquor.com/thmb/9eHA7QRo14l2tUEZ12pnYw09svU=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/whiskeyandcoke-720x720-primary-73df64c30d2e4576b4a9a7b727748d1b.jpg',
-		modbusAddress: 104,
-		category: 'whiskey',
-		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' },
-			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
-		]
-	},
-	// {
-	// 	id: 'neat-whiskey',
-	// 	name: 'Neat Whiskey',
-	// 	imageUrl: 'https://www.thecocktaildb.com/images/media/drink/5s22081504883416.jpg',
-	// 	modbusAddress: 105,
-	// 	category: 'whiskey',
-	// 	steps: [
-	// 		{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' },
-	// 		{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
-	// 	]
-	// },
-	{
-		id: 'whiskey-highball',
-		name: 'Whiskey Highball',
-		imageUrl: 'https://www.liquor.com/thmb/2w_CTNYp8grTR8MtREhG6y87Dow=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/whiskey-highball-1500x1500-hero-aa13a49019364fab8c94b53861aeb182.jpg',
+		imageUrl: 'https://www.thecocktaildb.com/images/media/drink/wzupxr1580737578.jpg',
 		modbusAddress: 106,
 		category: 'whiskey',
 		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' },
-			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' },
-			{ label: 'Adding Soda', stateKey: 'soda', description: 'Pouring soda into the glass' },
-			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' }
+			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
+			{ label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass' }, // 39
+			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' }, // 41
+			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	}
 ];
@@ -117,6 +118,20 @@ export const cocktails = [
  * @returns {Cocktail | undefined}
  */
 export function getCocktailById(id) {
+	// Handle custom cocktail
+	if (id === 'custom') {
+		return {
+			id: 'custom',
+			name: 'Custom Drink',
+			imageUrl: '',
+			modbusAddress: 107,
+			category: 'custom',
+			steps: [
+				{ label: 'Preparing', stateKey: 'preparing', description: 'Preparing your custom drink' },
+				{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'Your custom drink is ready!' }
+			]
+		};
+	}
 	return cocktails.find(c => c.id === id);
 }
 

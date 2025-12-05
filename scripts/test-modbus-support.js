@@ -55,7 +55,9 @@ async function test() {
 
         console.log('✅ Connected successfully!\n');
 
-        // Test Read Functions
+        console.log('ℹ️  RobotStudio Configuration: All variables are COILS\n');
+
+        // Test Read Coils (the only function we use with RobotStudio)
         await testFunction(
             'Read Coils',
             1,
@@ -63,29 +65,8 @@ async function test() {
             TEST_ADDRESSES
         );
 
-        await testFunction(
-            'Read Discrete Inputs',
-            2,
-            (addr) => client.readDiscreteInputs(addr, 1),
-            TEST_ADDRESSES
-        );
-
-        await testFunction(
-            'Read Holding Registers',
-            3,
-            (addr) => client.readHoldingRegisters(addr, 1),
-            TEST_ADDRESSES
-        );
-
-        await testFunction(
-            'Read Input Registers',
-            4,
-            (addr) => client.readInputRegisters(addr, 1),
-            TEST_ADDRESSES
-        );
-
         // Test Write Functions (only on cocktail addresses to avoid affecting other systems)
-        const WRITE_ADDRESSES = [100, 101, 102, 103, 104, 106];
+        const WRITE_ADDRESSES = [100, 101, 102, 103, 104, 106, 107];
 
         await testFunction(
             'Write Single Coil',
@@ -95,18 +76,6 @@ async function test() {
                 // Immediately turn it off to avoid triggering actual cocktails
                 await client.writeCoil(addr, false);
                 return { data: [true] };
-            },
-            WRITE_ADDRESSES
-        );
-
-        await testFunction(
-            'Write Single Register',
-            6,
-            async (addr) => {
-                await client.writeRegister(addr, 1);
-                // Immediately reset to avoid triggering actual cocktails
-                await client.writeRegister(addr, 0);
-                return { data: [1] };
             },
             WRITE_ADDRESSES
         );

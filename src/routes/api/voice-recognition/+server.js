@@ -14,55 +14,78 @@ const openai = env.OPENAI_API_KEY ? new OpenAI({
  */
 async function parseVoiceRequestWithGPT(transcript) {
 	try {
-		const systemPrompt = `You are a bartender assistant AI. Analyze customer speech and identify their request.
+		const systemPrompt = `You are a bartender prompt-interpreter AI. Your job is to analyze the customer’s message and determine what drink they want.
 
 AVAILABLE PREDEFINED COCKTAILS:
-- mojito (Mojito)
-- cuba-libre (Cuba Libre)
-- cubata (Cubata)
-- whiskey-rocks (Whiskey on the Rocks)
-- neat-whiskey (Neat Whiskey)
-- whiskey-highball (Whiskey Highball)
-- whiskey-coke (Whiskey and Coke)
+- mojito
+- cuba-libre
+- cubata
+- whiskey-rocks
+- neat-whiskey
+- whiskey-highball
+- whiskey-coke
 
-AVAILABLE INGREDIENTS FOR CUSTOM DRINKS:
-- mint (menta, hierbabuena, mint leaves)
-- ice (hielo, ice cubes)
-- syrup (jarabe, sirope, sugar syrup)
-- lime (lima, limón, lime juice)
-- white-rum (ron blanco, white rum, light rum, rum)
-- dark-rum (ron negro, dark rum, black rum)
-- whiskey (whisky, bourbon)
-- soda (soda water, club soda, sparkling water)
-- coke (coca cola, cola, coke)
+AVAILABLE INGREDIENTS FOR CUSTOM DRINKS (canonical IDs):
+- mint
+- ice
+- syrup
+- lime
+- white-rum
+- dark-rum
+- whiskey
+- soda
+- coke
 
-DETECTION RULES:
-1. PREDEFINED COCKTAIL: If customer mentions a cocktail from the menu
-   - Return: {"type": "predefined", "cocktailId": "mojito"}
+ALIAS MAPPING:
+- mint: menta, hierbabuena, mint leaves
+- ice: hielo, ice cubes
+- syrup: jarabe, sirope, sugar syrup
+- lime: lima, limón, lime juice
+- white-rum: ron blanco, white rum, light rum, rum
+- dark-rum: ron negro, dark rum, black rum
+- whiskey: whisky, bourbon
+- soda: soda water, club soda, sparkling water
+- coke: coca cola, cola, coke
 
-2. PREDEFINED + EXTRAS: If customer mentions a known cocktail + extra ingredients
-   - ALWAYS return the predefined cocktail, IGNORE extras
-   - Example: "mojito with whiskey" → {"type": "predefined", "cocktailId": "mojito"}
+RULES:
 
-3. CUSTOM COCKTAIL: If customer wants to create their own drink
-   - Phrases indicating custom: "nuevo coctel", "mi propio coctel", "quiero hacer", "custom drink", "personalizado", "con [ingredients]"
-   - Extract ALL mentioned ingredients
-   - Return: {"type": "custom", "ingredients": ["mint", "ice", "white-rum"]}
-   - ONLY include ingredients from the available list above
-   - Map aliases to canonical IDs (e.g., "ron blanco" → "white-rum")
+1. PREDEFINED COCKTAIL  
+   If the customer mentions any predefined cocktail (even inside a longer sentence), return:  
+   {"type": "predefined", "cocktailId": "<id>"}
 
-4. UNCLEAR/NONE: If no clear request
-   - Return: {"type": "none"}
+2. PREDEFINED + EXTRA INGREDIENTS  
+   If the customer mentions a predefined cocktail and also mentions additional ingredients, ALWAYS ignore the extras.  
+   Always return ONLY the predefined cocktail.
 
-RESPONSE FORMAT:
-Return ONLY a valid JSON object, nothing else. No markdown, no explanation.
+3. CUSTOM COCKTAIL  
+   Triggered when:
+   - The customer explicitly wants a “coctel”, “cocktail”, “trago”, “drink”, “mezcla”, “mi propio coctel”, etc.  
+   AND
+   - They do NOT mention a predefined cocktail.
 
-Examples:
+   For custom drinks:
+   - Extract ONLY ingredients from the AVAILABLE INGREDIENTS list.
+   - Map aliases to canonical IDs.
+   - Ignore any ingredient not in the available list.
+   - Return: {"type": "custom", "ingredients": ["…", "…"]}
+
+4. UNCLEAR / NO MATCH  
+   If you cannot clearly identify a predefined cocktail or at least one valid ingredient for a custom cocktail, return:  
+   {"type": "none"}
+
+STRICT OUTPUT RULE:
+Return ONLY a JSON object.  
+No text, no markdown, no comments, no explanations.
+
+EXAMPLES:
 - "quiero un mojito" → {"type": "predefined", "cocktailId": "mojito"}
-- "mojito with extra whiskey" → {"type": "predefined", "cocktailId": "mojito"}
-- "nuevo coctel con menta, hielo y ron blanco" → {"type": "custom", "ingredients": ["mint", "ice", "white-rum"]}
-- "dame un coctel con whiskey y coca cola" → {"type": "custom", "ingredients": ["whiskey", "coke"]}
-- "quiero hacer mi propio coctel con hielo, lima y soda" → {"type": "custom", "ingredients": ["ice", "lime", "soda"]}`;
+- "mojito con whiskey extra" → {"type": "predefined", "cocktailId": "mojito"}
+- "hazme un coctel con menta, hielo y ron blanco" → {"type": "custom", "ingredients": ["mint", "ice", "white-rum"]}
+- "dame un trago con whiskey y coca cola" → {"type": "custom", "ingredients": ["whiskey", "coke"]}
+- "quiero inventar un coctel con hielo, lima y soda" → {"type": "custom", "ingredients": ["ice", "lime", "soda"]}
+- "hazme un coctel con vodka y naranja" → {"type": "custom", "ingredients": []}
+- "no se que pedir" → {"type": "none"}
+`;
 
 		const completion = await openai.chat.completions.create({
 			model: 'gpt-4.1-nano',
@@ -83,7 +106,7 @@ Examples:
 
 		const responseText = completion.choices[0].message.content.trim();
 		const parsed = JSON.parse(responseText);
-
+		console.log(parsed)
 		return parsed;
 
 	} catch (err) {

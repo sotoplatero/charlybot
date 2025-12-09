@@ -5,6 +5,7 @@
 	import { getCocktailById } from '$lib/data/cocktails.js';
 
 	let showModal = $state(false);
+	let dialogElement = $state(/** @type {HTMLDialogElement | null} */ (null));
 
 	$effect(() => {
 		// Show modal when a cocktail is being prepared
@@ -15,6 +16,13 @@
 		// Close modal when activeCocktailId is cleared (store handles stopping polling)
 		if (showModal && !$cocktailStatus.activeCocktailId) {
 			showModal = false;
+		}
+	});
+
+	// Scroll to top when modal opens
+	$effect(() => {
+		if (showModal && dialogElement) {
+			dialogElement.scrollTop = 0;
 		}
 	});
 
@@ -68,7 +76,7 @@
 </script>
 
 {#if showModal}
-<dialog class="modal modal-open overflow-y-auto" style="animation: fadeIn 0.3s ease-out;">
+<dialog bind:this={dialogElement} class="modal modal-open overflow-y-auto items-start" style="animation: fadeIn 0.3s ease-out;">
 	<div class="modal-box max-w-3xl w-full max-h-none my-8 bg-white border-4 border-cyan-200 shadow-2xl" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
 		<!-- Compact Header -->
 		<div class="flex flex-col gap-4 mb-8 pb-6 border-b-2 ">

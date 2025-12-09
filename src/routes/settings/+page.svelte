@@ -252,73 +252,47 @@
 								Save
 							{/if}
 						</button>
-				<button
-					class="btn btn-lg bg-cyan-600 hover:bg-cyan-700 text-white border-0 text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50"
-					onclick={handleTest}
-					disabled={testStatus.testing}
-				>
-					{#if testStatus.testing}
-						<span class="loading loading-spinner"></span>
-						Testing...
-					{:else}
-						<Wifi class="w-6 h-6" />
-						Test
-					{/if}
-				</button>
-
-					</div>
-				</form>
-			</div>
-
-			<!-- Test Connection -->
-			<div class="bg-white rounded-3xl shadow-2xl border-4 border-cyan-200 p-8 md:p-12" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;">
-				<h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-					<Wifi class="w-8 h-8 text-cyan-600" />
-					Test
-				</h2>
-
-				<p class="text-lg text-gray-600 mb-6">
-					Test the configuration in the form above. This will <strong>temporarily close</strong> the current connection to verify the new settings work correctly.
-				</p>
-
-				<button
-					class="btn btn-lg w-full bg-cyan-600 hover:bg-cyan-700 text-white border-0 text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50"
-					onclick={handleTest}
-					disabled={testStatus.testing}
-				>
-					{#if testStatus.testing}
-						<span class="loading loading-spinner"></span>
-						Testing Connection...
-					{:else}
-						<Wifi class="w-6 h-6" />
-						Test Connection
-					{/if}
-				</button>
-
-				<!-- Test Result -->
-				{#if testStatus.result}
-					<div class="mt-6 p-6 rounded-xl border-2 {
-						testStatus.result === 'success'
-							? 'bg-green-50 border-green-400'
-							: 'bg-red-50 border-red-400'
-					}" style="animation: slideUp 0.3s ease-out;">
-						<div class="flex items-center gap-3">
-							{#if testStatus.result === 'success'}
-								<Wifi class="w-8 h-8 text-green-600" />
-								<div>
-									<h3 class="text-xl font-bold text-green-900">Connection Successful!</h3>
-									<p class="text-lg text-green-700 mt-1">The robot is reachable with the current configuration.</p>
-								</div>
+						<button
+							type="button"
+							class="btn btn-lg border-0 text-white text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50 {
+								testStatus.result === 'success'
+									? 'bg-green-600 hover:bg-green-700'
+									: testStatus.result === 'error'
+										? 'bg-red-600 hover:bg-red-700'
+										: 'bg-cyan-600 hover:bg-cyan-700'
+							}"
+							onclick={handleTest}
+							disabled={testStatus.testing}
+						>
+							{#if testStatus.testing}
+								<span class="loading loading-spinner"></span>
+								Testing...
+							{:else if testStatus.result === 'success'}
+								<Wifi class="w-6 h-6" />
+								Connected
+							{:else if testStatus.result === 'error'}
+								<WifiOff class="w-6 h-6" />
+								Failed
 							{:else}
-								<WifiOff class="w-8 h-8 text-red-600" />
-								<div>
-									<h3 class="text-xl font-bold text-red-900">Connection Failed</h3>
-									<p class="text-lg text-red-700 mt-1">{testStatus.error}</p>
-								</div>
+								<Wifi class="w-6 h-6" />
+								Test
 							{/if}
-						</div>
+						</button>
 					</div>
-				{/if}
+
+					<!-- Test Result -->
+					{#if testStatus.result && testStatus.error}
+						<div class="mt-6 p-4 rounded-xl bg-red-50 border-2 border-red-400" style="animation: slideUp 0.3s ease-out;">
+							<div class="flex items-start gap-3">
+								<AlertCircle class="w-6 h-6 text-red-600 shrink-0 mt-1" />
+								<div>
+									<h3 class="font-bold text-red-900">Connection Failed</h3>
+									<p class="text-red-700 mt-1">{testStatus.error}</p>
+								</div>
+							</div>
+						</div>
+					{/if}
+				</form>
 			</div>
 		</div>
 	</main>

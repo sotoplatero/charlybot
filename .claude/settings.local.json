@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(pnpm list:*)",
+      "WebSearch",
+      "Bash(node scripts/test-modbus-support.js:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm check:*)",
+      "WebFetch(domain:www.thecocktaildb.com)",
+      "WebFetch(domain:unsplash.com)",
+      "WebFetch(domain:ultimate.watch)",
+      "Bash(pnpm dev:check:*)",
+      "Bash(cat:*)",
+      "Bash(node --version:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm:*)",
+      "mcp__svelte__svelte-autofixer"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

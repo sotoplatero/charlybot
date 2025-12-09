@@ -1,0 +1,42 @@
+{
+  "name": "bartender",
+  "description": "SvelteKit application for controlling an industrial robot bartender via Modbus TCP",
+  "keywords": [
+    "sveltekit",
+    "modbus",
+    "robotics",
+    "cocktails"
+  ],
+  "repository": "https://github.com/your-repo/bartender",
+  "env": {
+    "MODBUS_HOST": {
+      "description": "IP address of the Modbus TCP device (robot bartender)",
+      "value": "127.0.0.1",
+      "required": true
+    },
+    "MODBUS_PORT": {
+      "description": "Port of the Modbus TCP device",
+      "value": "502",
+      "required": false
+    },
+    "MODBUS_UNIT_ID": {
+      "description": "Modbus slave unit ID",
+      "value": "1",
+      "required": false
+    },
+    "MODBUS_TIMEOUT": {
+      "description": "Modbus connection timeout in milliseconds",
+      "value": "2000",
+      "required": false
+    },
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API key for voice recognition with Whisper (get from https://platform.openai.com/api-keys)",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

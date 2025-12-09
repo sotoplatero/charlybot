@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  charlybot-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: charlybot-dev
+    restart: unless-stopped
+
+    ports:
+      - "5173:5173"  # Vite dev server
+
+    environment:
+      NODE_ENV: development
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      MODBUS_HOST: ${MODBUS_HOST:-127.0.0.1}
+      MODBUS_PORT: ${MODBUS_PORT:-502}
+      MODBUS_UNIT_ID: ${MODBUS_UNIT_ID:-1}
+      MODBUS_TIMEOUT: ${MODBUS_TIMEOUT:-2000}
+
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./svelte.config.js:/app/svelte.config.js
+      - ./vite.config.js:/app/vite.config.js
+      - ./tailwind.config.js:/app/tailwind.config.js
+      - ./jsconfig.json:/app/jsconfig.json
+      # Exclude node_modules from mount
+      - /app/node_modules
+
+    network_mode: bridge
+
+    # Development logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
+
+    command: pnpm dev

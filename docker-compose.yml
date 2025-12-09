@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  charlybot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: charlybot-app
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      # Node environment
+      NODE_ENV: production
+
+      # OpenAI Configuration
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+      # Modbus Configuration
+      MODBUS_HOST: ${MODBUS_HOST:-127.0.0.1}
+      MODBUS_PORT: ${MODBUS_PORT:-502}
+      MODBUS_UNIT_ID: ${MODBUS_UNIT_ID:-1}
+      MODBUS_TIMEOUT: ${MODBUS_TIMEOUT:-2000}
+
+    # Network mode for Modbus communication
+    # Use 'host' for direct access to robot on same network
+    # Or use 'bridge' (default) and configure MODBUS_HOST properly
+    network_mode: bridge
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Resource limits (optional but recommended)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Optional: Nginx reverse proxy for production
+  # Uncomment if you want to use nginx as reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: charlybot-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - charlybot
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
+
+# Optional: Named volumes for persistence
+# volumes:
+#   app-data:
+
+# Optional: Custom network
+# networks:
+#   charlybot-network:
+#     driver: bridge

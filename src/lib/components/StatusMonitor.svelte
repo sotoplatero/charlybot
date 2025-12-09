@@ -68,30 +68,30 @@
 </script>
 
 {#if showModal}
-<dialog class="modal modal-open" style="animation: fadeIn 0.3s ease-out;">
-	<div class="modal-box max-w-3xl w-full bg-white border-4 border-cyan-200 shadow-2xl" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+<dialog class="modal modal-open overflow-y-auto" style="animation: fadeIn 0.3s ease-out;">
+	<div class="modal-box max-w-3xl w-full max-h-none my-8 bg-white border-4 border-cyan-200 shadow-2xl" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
 		<!-- Compact Header -->
-		<div class="flex flex-col gap-4 mb-8 pb-6 border-b-2 border-gray-200">
+		<div class="flex flex-col gap-4 mb-8 pb-6 border-b-2 ">
 			<div class="flex items-center gap-4">
 				<Bot class="w-12 h-12 text-cyan-600 animate-pulse" />
 				<div class="flex-1">
 					<h3 class="font-bold text-3xl md:text-4xl gradient-text">
 						Preparing {getCurrentCocktail()?.name || 'Your Cocktail'}
 					</h3>
-					<p class="text-lg md:text-xl text-gray-600 mt-1">Please wait while Charly crafts your drink...</p>
+					<!-- <p class="text-lg md:text-xl text-gray-600 mt-1">Please wait while Charly crafts your drink...</p> -->
 				</div>
 			</div>
-			<ProgressIndicator progress={$cocktailStatus.progress} />
+			<!-- <ProgressIndicator progress={$cocktailStatus.progress} /> -->
 		</div>
 
 		<!-- Cocktail Steps in Grid -->
 		{#if getCurrentCocktail()}
-			<div class="grid grid-cols-1 gap-4">
-				{#each getCurrentCocktail().steps as step, index}
+			<div class="grid grid-cols-1 gap-2">
+				{#each getCurrentCocktail().steps as step, index (step.stateKey)}
 					{@const isActive = isStepActive(step.stateKey)}
 					{@const isCurrent = isCurrentStep(index)}
 					<div
-						class="flex items-center gap-5 p-5 rounded-xl border-2 transition-all duration-300 {
+						class="flex items-center gap-5 p-4 rounded-xl border-2 transition-all duration-300 {
 							isActive
 								? 'bg-green-50 border-green-400'
 								: isCurrent
@@ -113,7 +113,7 @@
 
 						<!-- Content -->
 						<div class="flex-1 min-w-0">
-							<div class="font-semibold text-xl md:text-2xl text-gray-800 truncate">
+							<div class="font-semibold text-lg md:text-xl text-gray-800 truncate">
 								{step.label}
 							</div>
 							<div class="text-base md:text-lg {isActive ? 'text-green-700' : isCurrent ? 'text-cyan-700' : 'text-gray-500'} truncate">

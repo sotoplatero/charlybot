@@ -166,22 +166,7 @@
 					Connection Configuration
 				</h2>
 
-				<!-- Important Notice -->
-				<div class="mb-6 p-4 bg-blue-50 border-2 border-blue-300 rounded-xl">
-					<div class="flex items-start gap-3">
-						<AlertCircle class="w-6 h-6 text-blue-600 shrink-0 mt-1" />
-						<div>
-							<h3 class="text-lg font-bold text-blue-900">How It Works</h3>
-							<ul class="text-base text-blue-800 mt-2 space-y-1 list-disc list-inside">
-								<li><strong>Save Configuration:</strong> Updates server settings and forces reconnection with new parameters</li>
-								<li><strong>Test Connection:</strong> Temporarily closes current connection to test the configuration in the form</li>
-								<li><strong>Default Address:</strong> 192.168.125.1:502 (Unit ID: 1)</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-
-				<form class="space-y-6" onsubmit={(e) => { e.preventDefault(); handleSave(); }}>
+	<form class="space-y-6" onsubmit={(e) => { e.preventDefault(); handleSave(); }}>
 					<!-- Host -->
 					<div>
 						<label for="host" class="block text-xl font-semibold text-gray-700 mb-2">
@@ -195,9 +180,6 @@
 							placeholder="192.168.125.1"
 							required
 						/>
-						<p class="text-sm text-gray-500 mt-2">
-							IP address or hostname of the Modbus TCP server
-						</p>
 					</div>
 
 					<!-- Port -->
@@ -215,9 +197,6 @@
 							placeholder="502"
 							required
 						/>
-						<p class="text-sm text-gray-500 mt-2">
-							Default Modbus TCP port is 502
-						</p>
 					</div>
 
 					<!-- Unit ID -->
@@ -235,9 +214,6 @@
 							placeholder="1"
 							required
 						/>
-						<p class="text-sm text-gray-500 mt-2">
-							Modbus Unit ID (0-247), typically 1
-						</p>
 					</div>
 
 					<!-- Timeout -->
@@ -256,16 +232,13 @@
 							placeholder="5000"
 							required
 						/>
-						<p class="text-sm text-gray-500 mt-2">
-							Connection timeout in milliseconds (recommended: 5000-10000)
-						</p>
 					</div>
 
 					<!-- Action Buttons -->
 					<div class="flex flex-col md:flex-row gap-4 pt-4">
 						<button
 							type="submit"
-							class="btn btn-lg flex-1 krka-accent-gradient border-0 text-white hover:shadow-xl text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50"
+							class="btn btn-lg krka-accent-gradient border-0 text-white hover:shadow-xl text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50"
 							disabled={saveStatus.saving}
 						>
 							{#if saveStatus.saving}
@@ -276,18 +249,23 @@
 								Saved!
 							{:else}
 								<Save class="w-6 h-6" />
-								Save Configuration
+								Save
 							{/if}
 						</button>
+				<button
+					class="btn btn-lg bg-cyan-600 hover:bg-cyan-700 text-white border-0 text-xl px-8 py-6 h-auto active:scale-95 transition-all disabled:opacity-50"
+					onclick={handleTest}
+					disabled={testStatus.testing}
+				>
+					{#if testStatus.testing}
+						<span class="loading loading-spinner"></span>
+						Testing...
+					{:else}
+						<Wifi class="w-6 h-6" />
+						Test
+					{/if}
+				</button>
 
-						<button
-							type="button"
-							class="btn btn-lg flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 border-0 text-xl px-8 py-6 h-auto active:scale-95 transition-all"
-							onclick={handleReset}
-						>
-							<RotateCcw class="w-6 h-6" />
-							Reset to Default
-						</button>
 					</div>
 				</form>
 			</div>
@@ -296,7 +274,7 @@
 			<div class="bg-white rounded-3xl shadow-2xl border-4 border-cyan-200 p-8 md:p-12" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;">
 				<h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3">
 					<Wifi class="w-8 h-8 text-cyan-600" />
-					Test Connection
+					Test
 				</h2>
 
 				<p class="text-lg text-gray-600 mb-6">

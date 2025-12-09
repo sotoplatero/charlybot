@@ -140,7 +140,7 @@
 					<div class="h-12 md:h-14 w-px bg-gradient-to-b from-transparent via-cyan-300 to-transparent"></div>
 					<h1 class="text-4xl md:text-5xl font-bold gradient-text">Charly Bot</h1>
 				</div>
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-2">
 					<button
 						class="btn btn-circle btn-lg text-gray-700 hover:bg-cyan-100 border-2 border-gray-300 active:scale-95 transition-transform"
 						onclick={() => goto('/settings')}

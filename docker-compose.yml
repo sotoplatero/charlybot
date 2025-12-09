@@ -24,10 +24,9 @@ services:
       MODBUS_UNIT_ID: ${MODBUS_UNIT_ID:-1}
       MODBUS_TIMEOUT: ${MODBUS_TIMEOUT:-2000}
 
-    # Network mode for Modbus communication
-    # Use 'host' for direct access to robot on same network
-    # Or use 'bridge' (default) and configure MODBUS_HOST properly
-    network_mode: bridge
+    # Network configuration
+    networks:
+      - charlybot-network
 
     # Health check
     healthcheck:
@@ -54,31 +53,32 @@ services:
           cpus: '0.5'
           memory: 512M
 
-  # Optional: Nginx reverse proxy for production
-  # Uncomment if you want to use nginx as reverse proxy
-  # nginx:
-  #   image: nginx:alpine
-  #   container_name: charlybot-nginx
-  #   restart: unless-stopped
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
-  #     - ./ssl:/etc/nginx/ssl:ro
-  #   depends_on:
-  #     - charlybot
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "10m"
-  #       max-file: "3"
+  # Nginx reverse proxy with self-signed SSL for local network
+  nginx:
+    image: nginx:alpine
+    container_name: charlybot-nginx
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - charlybot
+    networks:
+      - charlybot-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 # Optional: Named volumes for persistence
 # volumes:
 #   app-data:
 
-# Optional: Custom network
-# networks:
-#   charlybot-network:
-#     driver: bridge
+# Custom network for service communication
+networks:
+  charlybot-network:
+    driver: bridge

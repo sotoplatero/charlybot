@@ -223,7 +223,6 @@ export const cocktailRecipes = {
 		ingredientMapping['straw'].modbusWriteAddress       // 143
 	],
 	'cognac': [
-		ingredientMapping['ice'].modbusWriteAddress,        // 134
 		ingredientMapping['cognac'].modbusWriteAddress,   // 138
 	],
 	'whiskey-rocks': [

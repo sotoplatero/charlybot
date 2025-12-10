@@ -43,7 +43,7 @@ node scripts/test-modbus-support.js
 | 135 | Syrup | Coil (Write) | - |
 | 136 | Lime | Coil (Write) | - |
 | 137 | White Rum | Coil (Write) | - |
-| 138 | Dark Rum | Coil (Write) | - |
+| 138 | Cognac | Coil (Write) | - |
 | 139 | Whiskey | Coil (Write) | - |
 | 140 | Soda | Coil (Write) | - |
 | 141 | Coke | Coil (Write) | - |

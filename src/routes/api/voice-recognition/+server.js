@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import OpenAI from 'openai';
 import { env } from '$env/dynamic/private';
-import { cocktails } from '$lib/data/cocktails.js';
+import { cocktails, ingredientMapping, ingredientAliases } from '$lib/data/cocktails.js';
 
 const openai = env.OPENAI_API_KEY ? new OpenAI({
 	apiKey: env.OPENAI_API_KEY
@@ -14,52 +14,41 @@ const openai = env.OPENAI_API_KEY ? new OpenAI({
  */
 async function parseVoiceRequestWithGPT(transcript) {
 	try {
-		const systemPrompt = `You are a bartender prompt-interpreter AI. Your job is to analyze the customer’s message and determine what drink they want.
+		// Generate cocktail list dynamically
+		const cocktailList = cocktails.map(c => `- ${c.id} (${c.name})`).join('\n');
+
+		// Generate ingredient list dynamically
+		const ingredientList = Object.keys(ingredientMapping).map(id => `- ${id}`).join('\n');
+
+		// Generate alias mapping dynamically
+		const aliasMapping = Object.entries(ingredientAliases)
+			.map(([id, aliases]) => `- ${id}: ${aliases.join(', ')}`)
+			.join('\n');
+
+		const systemPrompt = `You are a bartender prompt-interpreter AI. Your job is to analyze the customer's message and determine what drink they want.
 
 AVAILABLE PREDEFINED COCKTAILS:
-- mojito
-- cuba-libre
-- cubata
-- whiskey-rocks
-- neat-whiskey
-- whiskey-highball
-- whiskey-coke
+${cocktailList}
 
 AVAILABLE INGREDIENTS FOR CUSTOM DRINKS (canonical IDs):
-- mint
-- ice
-- syrup
-- lime
-- white-rum
-- dark-rum
-- whiskey
-- soda
-- coke
+${ingredientList}
 
 ALIAS MAPPING:
-- mint: menta, hierbabuena, mint leaves
-- ice: hielo, ice cubes
-- syrup: jarabe, sirope, sugar syrup
-- lime: lima, limón, lime juice
-- white-rum: ron blanco, white rum, light rum, rum
-- dark-rum: ron negro, dark rum, black rum
-- whiskey: whisky, bourbon
-- soda: soda water, club soda, sparkling water
-- coke: coca cola, cola, coke
+${aliasMapping}
 
 RULES:
 
-1. PREDEFINED COCKTAIL  
-   If the customer mentions any predefined cocktail (even inside a longer sentence), return:  
+1. PREDEFINED COCKTAIL
+   If the customer mentions any predefined cocktail (even inside a longer sentence), return:
    {"type": "predefined", "cocktailId": "<id>"}
 
-2. PREDEFINED + EXTRA INGREDIENTS  
-   If the customer mentions a predefined cocktail and also mentions additional ingredients, ALWAYS ignore the extras.  
+2. PREDEFINED + EXTRA INGREDIENTS
+   If the customer mentions a predefined cocktail and also mentions additional ingredients, ALWAYS ignore the extras.
    Always return ONLY the predefined cocktail.
 
-3. CUSTOM COCKTAIL  
+3. CUSTOM COCKTAIL
    Triggered when:
-   - The customer explicitly wants a “coctel”, “cocktail”, “trago”, “drink”, “mezcla”, “mi propio coctel”, etc.  
+   - The customer explicitly wants a "coctel", "cocktail", "trago", "drink", "mezcla", "mi propio coctel", etc.
    AND
    - They do NOT mention a predefined cocktail.
 
@@ -69,12 +58,12 @@ RULES:
    - Ignore any ingredient not in the available list.
    - Return: {"type": "custom", "ingredients": ["…", "…"]}
 
-4. UNCLEAR / NO MATCH  
-   If you cannot clearly identify a predefined cocktail or at least one valid ingredient for a custom cocktail, return:  
+4. UNCLEAR / NO MATCH
+   If you cannot clearly identify a predefined cocktail or at least one valid ingredient for a custom cocktail, return:
    {"type": "none"}
 
 STRICT OUTPUT RULE:
-Return ONLY a JSON object.  
+Return ONLY a JSON object.
 No text, no markdown, no comments, no explanations.
 
 EXAMPLES:
@@ -137,11 +126,15 @@ export async function POST({ request }) {
 		// Create a File object with proper name
 		const file = new File([audioBlob], 'audio.webm', { type: audioFile.type });
 
+		// Generate Whisper prompt dynamically from cocktail names
+		const cocktailNames = cocktails.map(c => c.name).join(', ');
+		const whisperPrompt = `Cocktail order. Drinks: ${cocktailNames}.`;
+
 		// Transcribe audio using Whisper (auto-detect language)
 		const transcription = await openai.audio.transcriptions.create({
 			file: file,
 			model: 'whisper-1',
-			prompt: 'Cocktail order. Drinks: mojito, cuba libre, cubata, whiskey on the rocks, neat whiskey, whiskey highball, whiskey and coke.'
+			prompt: whisperPrompt
 		});
 
 		const transcript = transcription.text;

@@ -45,7 +45,7 @@ function simulateCocktailPreparation() {
 		135: 35,  // syrup write → syrup read
 		136: 36,  // lime write → lime read
 		137: 37,  // whiteRum write → whiteRum read
-		138: 38,  // darkRum write → darkRum read
+		138: 38,  // cognac write → cognac read
 		139: 39,  // whiskey write → whiskey read
 		140: 40,  // soda write → soda read
 		141: 41,  // coke write → coke read

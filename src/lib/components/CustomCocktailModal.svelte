@@ -10,7 +10,7 @@
 		{ id: 'syrup', label: 'Syrup', icon: '🍯', stateKey: 'syrup', category: 'other' },
 		{ id: 'lime', label: 'Lime', icon: '🍋', stateKey: 'lime', category: 'other' },
 		{ id: 'white-rum', label: 'White Rum', icon: '🥃', stateKey: 'whiteRum', category: 'alcohol' },
-		{ id: 'dark-rum', label: 'Dark Rum', icon: '🥃', stateKey: 'darkRum', category: 'alcohol' },
+		{ id: 'cognac', label: 'Cognac', icon: '🥃', stateKey: 'cognac', category: 'alcohol' },
 		{ id: 'whiskey', label: 'Whiskey', icon: '🥃', stateKey: 'whiskey', category: 'alcohol' },
 		{ id: 'soda', label: 'Soda', icon: '🥤', stateKey: 'soda', category: 'mixer' },
 		{ id: 'coke', label: 'Coke', icon: '🥤', stateKey: 'coke', category: 'mixer' }
@@ -70,7 +70,7 @@
 			// Check if can select
 			if (!canSelectIngredient(ingredientId)) {
 				if (ingredient.category === 'alcohol') {
-					validationError = 'You can only select up to 2 alcohols (White Rum, Dark Rum, or Whiskey)';
+					validationError = 'You can only select up to 2 alcohols (White Rum, Cognac, or Whiskey)';
 				} else if (ingredient.category === 'mixer') {
 					validationError = 'You can only select 1 mixer (Soda or Coke)';
 				}

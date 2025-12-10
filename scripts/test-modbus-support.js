@@ -11,7 +11,7 @@ const PORT = 502;
 const UNIT_ID = 1;
 
 // Addresses to test (including the ones used for cocktails and steps)
-// Steps: 32-40 (muddling, syrup, lime, ice, whiteRum, darkRum, soda, coke, whiskey)
+// Steps: 32-40 (muddling, syrup, lime, ice, whiteRum, cognac, soda, coke, whiskey)
 // System: 90 (cupHolder), 91 (drinkReady), 92 (waitingRecipe)
 // Cocktail triggers: 100-106
 const TEST_ADDRESSES = [0, 1, 32, 33, 34, 35, 36, 37, 38, 39, 40, 90, 91, 92, 100, 101, 102, 103, 104, 106];

@@ -50,15 +50,13 @@ export const cocktails = [
 		]
 	},
 	{
-		id: 'cubata',
-		name: 'Cubata',
-		imageUrl: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&q=80',
+		id: 'cognac',
+		name: 'Cognac',
+		imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Cognac_glass.jpg/1280px-Cognac_glass.jpg',
 		modbusAddress: 102,
 		category: 'rum',
 		steps: [
-			{ label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass' }, // 34
-			{ label: 'Pouring Dark Rum', stateKey: 'darkRum', description: 'Pouring dark rum into the glass' }, // 38
-			{ label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass' }, // 41
+			{ label: 'Pouring Cognac', stateKey: 'cognac', description: 'Pouring Cognac into the glass' }, // 38
 			{ label: 'Drink Ready', stateKey: 'drinkReady', description: 'The process is finished' } // 91
 		]
 	},
@@ -113,17 +111,149 @@ export const cocktails = [
 	}
 ];
 
-// Map ingredient IDs to their configuration with modbus addresses for ordering
-const ingredientMapping = {
-	'mint': { label: 'Placing Mint', stateKey: 'mint', description: 'Placing mint leaves in the glass', modbusAddress: 32 },
-	'ice': { label: 'Adding Ice', stateKey: 'ice', description: 'Adding ice cubes to the glass', modbusAddress: 34 },
-	'syrup': { label: 'Pouring Syrup', stateKey: 'syrup', description: 'Pouring syrup into the glass', modbusAddress: 35 },
-	'lime': { label: 'Adding Lime', stateKey: 'lime', description: 'Pouring lime into the glass', modbusAddress: 36 },
-	'white-rum': { label: 'Pouring White Rum', stateKey: 'whiteRum', description: 'Pouring white rum into the glass', modbusAddress: 37 },
-	'dark-rum': { label: 'Pouring Dark Rum', stateKey: 'darkRum', description: 'Pouring dark rum into the glass', modbusAddress: 38 },
-	'whiskey': { label: 'Pouring Whiskey', stateKey: 'whiskey', description: 'Pouring whiskey into the glass', modbusAddress: 39 },
-	'soda': { label: 'Adding Soda', stateKey: 'soda', description: 'Pouring soda into the glass', modbusAddress: 40 },
-	'coke': { label: 'Adding Coke', stateKey: 'coke', description: 'Pouring coke into the glass', modbusAddress: 41 }
+// Map ingredient IDs to their configuration
+// modbusReadAddress: address for reading status/monitoring (32-41)
+// modbusWriteAddress: address for writing commands to activate ingredient (132-143)
+export const ingredientMapping = {
+	'mint': {
+		label: 'Placing Mint',
+		stateKey: 'mint',
+		description: 'Placing mint leaves in the glass',
+		modbusReadAddress: 32,
+		modbusWriteAddress: 132
+	},
+	'muddling': {
+		label: 'Muddling',
+		stateKey: 'muddling',
+		description: 'Muddling the ingredients',
+		modbusReadAddress: 33,
+		modbusWriteAddress: 133
+	},
+	'ice': {
+		label: 'Adding Ice',
+		stateKey: 'ice',
+		description: 'Adding ice cubes to the glass',
+		modbusReadAddress: 34,
+		modbusWriteAddress: 134
+	},
+	'syrup': {
+		label: 'Pouring Syrup',
+		stateKey: 'syrup',
+		description: 'Pouring syrup into the glass',
+		modbusReadAddress: 35,
+		modbusWriteAddress: 135
+	},
+	'lime': {
+		label: 'Adding Lime',
+		stateKey: 'lime',
+		description: 'Pouring lime into the glass',
+		modbusReadAddress: 36,
+		modbusWriteAddress: 136
+	},
+	'white-rum': {
+		label: 'Pouring White Rum',
+		stateKey: 'whiteRum',
+		description: 'Pouring white rum into the glass',
+		modbusReadAddress: 37,
+		modbusWriteAddress: 137
+	},
+	'cognac': {
+		label: 'Pouring cognac',
+		stateKey: 'cognac',
+		description: 'Pouring cognac into the glass',
+		modbusReadAddress: 38,
+		modbusWriteAddress: 138
+	},
+	'whiskey': {
+		label: 'Pouring Whiskey',
+		stateKey: 'whiskey',
+		description: 'Pouring whiskey into the glass',
+		modbusReadAddress: 39,
+		modbusWriteAddress: 139
+	},
+	'soda': {
+		label: 'Adding Soda',
+		stateKey: 'soda',
+		description: 'Pouring soda into the glass',
+		modbusReadAddress: 40,
+		modbusWriteAddress: 140
+	},
+	'coke': {
+		label: 'Adding Coke',
+		stateKey: 'coke',
+		description: 'Pouring coke into the glass',
+		modbusReadAddress: 41,
+		modbusWriteAddress: 141
+	},
+	'stirring': {
+		label: 'Stirring',
+		stateKey: 'stirring',
+		description: 'Stirring the drink',
+		modbusReadAddress: 42,
+		modbusWriteAddress: 142
+	},
+	'straw': {
+		label: 'Adding Straw',
+		stateKey: 'straw',
+		description: 'Adding a straw',
+		modbusReadAddress: 43,
+		modbusWriteAddress: 143
+	}
+};
+
+// Cocktail recipes with ingredient write addresses for Modbus commands
+export const cocktailRecipes = {
+	'mojito': [
+		ingredientMapping['mint'].modbusWriteAddress,       // 132
+		ingredientMapping['muddling'].modbusWriteAddress,   // 133
+		ingredientMapping['syrup'].modbusWriteAddress,      // 135
+		ingredientMapping['lime'].modbusWriteAddress,       // 136
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['white-rum'].modbusWriteAddress,  // 137
+		ingredientMapping['soda'].modbusWriteAddress,       // 140
+		ingredientMapping['stirring'].modbusWriteAddress,   // 142
+		ingredientMapping['straw'].modbusWriteAddress       // 143
+	],
+	'cuba-libre': [
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['white-rum'].modbusWriteAddress,  // 137
+		ingredientMapping['lime'].modbusWriteAddress,       // 136
+		ingredientMapping['coke'].modbusWriteAddress,       // 141
+		ingredientMapping['stirring'].modbusWriteAddress,   // 142
+		ingredientMapping['straw'].modbusWriteAddress       // 143
+	],
+	'cognac': [
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['cognac'].modbusWriteAddress,   // 138
+	],
+	'whiskey-rocks': [
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['whiskey'].modbusWriteAddress     // 139
+	],
+	'neat-whiskey': [
+		ingredientMapping['whiskey'].modbusWriteAddress     // 139
+	],
+	'whiskey-highball': [
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['whiskey'].modbusWriteAddress,    // 139
+		ingredientMapping['soda'].modbusWriteAddress,       // 140
+		ingredientMapping['stirring'].modbusWriteAddress,   // 142
+		ingredientMapping['straw'].modbusWriteAddress       // 143
+	],
+	'whiskey-coke': [
+		ingredientMapping['ice'].modbusWriteAddress,        // 134
+		ingredientMapping['whiskey'].modbusWriteAddress,    // 139
+		ingredientMapping['coke'].modbusWriteAddress,       // 141
+		ingredientMapping['stirring'].modbusWriteAddress,   // 142
+		ingredientMapping['straw'].modbusWriteAddress       // 143
+	]
+};
+
+// Special Modbus control addresses
+export const modbusControlAddresses = {
+	START: 96,           // Write 1 to start the robot
+	DRINK_READY: 91,     // Read: 1 when drink is ready
+	WAITING_RECIPE: 92   // Read: 1 when robot is ready for new order, 0 when busy
 };
 
 /**
@@ -149,7 +279,7 @@ export function getCocktailById(id, customIngredients = null) {
 			});
 
 			// Sort steps by modbus address to show them in the correct execution order
-			steps.sort((a, b) => a.modbusAddress - b.modbusAddress);
+			steps.sort((a, b) => (a.modbusReadAddress || 0) - (b.modbusReadAddress || 0));
 		}
 
 		// Always add "Drink Ready" as the final step

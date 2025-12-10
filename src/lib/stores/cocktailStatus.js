@@ -9,7 +9,7 @@ import { getCocktailById } from '$lib/data/cocktails.js';
  * @property {boolean} syrup - Address 35
  * @property {boolean} lime - Address 36
  * @property {boolean} whiteRum - Address 37
- * @property {boolean} darkRum - Address 38
+ * @property {boolean} cognac - Address 38
  * @property {boolean} whiskey - Address 39
  * @property {boolean} soda - Address 40
  * @property {boolean} coke - Address 41
@@ -39,7 +39,7 @@ export const cocktailStatus = writable({
 		syrup: false,        // Address 35
 		lime: false,         // Address 36
 		whiteRum: false,     // Address 37
-		darkRum: false,      // Address 38
+		cognac: false,      // Address 38
 		whiskey: false,      // Address 39
 		soda: false,         // Address 40
 		coke: false,         // Address 41

@@ -226,7 +226,7 @@ Expected output when working correctly:
 
 ### Read Addresses (Robot → App)
 These are **outputs from robot's perspective**, we READ them:
-- 32-41: Step states (mint, muddling, ice, syrup, lime, whiteRum, darkRum, whiskey, soda, coke)
+- 32-41: Step states (mint, muddling, ice, syrup, lime, whiteRum, cognac, whiskey, soda, coke)
 - 90: Cup holder present
 - 91: Drink ready
 - 92: Waiting for recipe (1 = ready, 0 = busy)
@@ -235,7 +235,7 @@ These are **outputs from robot's perspective**, we READ them:
 These are **inputs from robot's perspective**, we WRITE to them:
 - 96: Start signal
 - 100-107: Cocktail selection (mojito, cuba-libre, cubata, whiskey-rocks, neat-whiskey, whiskey-highball, whiskey-coke, custom)
-- 132-143: Ingredients (mint, muddling, ice, syrup, lime, whiteRum, darkRum, whiskey, soda, coke, stirring, straw)
+- 132-143: Ingredients (mint, muddling, ice, syrup, lime, whiteRum, cognac, whiskey, soda, coke, stirring, straw)
 
 ## Getting Help
 

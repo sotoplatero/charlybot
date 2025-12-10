@@ -274,11 +274,11 @@
 		onmousedown={handlePressStart}
 		onmouseup={handlePressEnd}
 		onmouseleave={handlePressEnd}
-		ontouchstart={handlePressStart}
-		ontouchend={handlePressEnd}
-		ontouchcancel={handlePressEnd}
+		ontouchstart|preventDefault|nonpassive={handlePressStart}
+		ontouchend|preventDefault|nonpassive={handlePressEnd}
+		ontouchcancel|preventDefault|nonpassive={handlePressEnd}
 		disabled={isProcessing}
-		class="btn btn-circle btn-xl shadow-xl transition-all duration-200 select-none"
+		class="voice-button btn btn-circle btn-xl shadow-xl transition-all duration-200 select-none"
 		class:btn-error={isRecording}
 		class:btn-primary={!isRecording && !isProcessing}
 		class:btn-disabled={isProcessing}
@@ -304,6 +304,16 @@
 </div>
 
 <style>
+	.voice-button {
+		-webkit-tap-highlight-color: transparent;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		touch-action: none;
+	}
+
 	.animate-ping {
 		animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 	}

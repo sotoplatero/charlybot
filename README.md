@@ -113,7 +113,7 @@ src/
 | Syrup | 135 | Jarabe |
 | Lime | 136 | Lima |
 | White Rum | 137 | Ron blanco |
-| Dark Rum | 138 | Ron oscuro |
+| Cognac | 138 | Ron oscuro |
 | Whiskey | 139 | Whisky |
 | Soda | 140 | Soda |
 | Coke | 141 | Coca-Cola |
@@ -141,7 +141,7 @@ src/
 
 ### Restricciones de personalización
 
-- **Alcoholes:** Máximo 2 (White Rum, Dark Rum o Whiskey)
+- **Alcoholes:** Máximo 2 (White Rum, Cognac o Whiskey)
 - **Mixers:** Máximo 1 (Soda o Coke)
 - **Otros:** Sin límite (Mint, Ice, Syrup, Lime)
 

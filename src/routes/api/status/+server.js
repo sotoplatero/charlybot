@@ -24,7 +24,7 @@ async function readRobotState(client) {
 		state.syrup = stepStates.data[3] === true;       // Address 35
 		state.lime = stepStates.data[4] === true;        // Address 36
 		state.whiteRum = stepStates.data[5] === true;    // Address 37
-		state.darkRum = stepStates.data[6] === true;     // Address 38
+		state.cognac = stepStates.data[6] === true;     // Address 38
 		state.whiskey = stepStates.data[7] === true;     // Address 39
 		state.soda = stepStates.data[8] === true;        // Address 40
 		state.coke = stepStates.data[9] === true;        // Address 41
@@ -37,7 +37,7 @@ async function readRobotState(client) {
 		if (state.syrup) activeSteps.push('syrup(35)');
 		if (state.lime) activeSteps.push('lime(36)');
 		if (state.whiteRum) activeSteps.push('whiteRum(37)');
-		if (state.darkRum) activeSteps.push('darkRum(38)');
+		if (state.cognac) activeSteps.push('cognac(38)');
 		if (state.whiskey) activeSteps.push('whiskey(39)');
 		if (state.soda) activeSteps.push('soda(40)');
 		if (state.coke) activeSteps.push('coke(41)');
@@ -55,7 +55,7 @@ async function readRobotState(client) {
 		state.syrup = false;
 		state.lime = false;
 		state.whiteRum = false;
-		state.darkRum = false;
+		state.cognac = false;
 		state.whiskey = false;
 		state.soda = false;
 		state.coke = false;
@@ -135,7 +135,7 @@ function getDefaultState() {
 		syrup: false,        // Address 35
 		lime: false,         // Address 36
 		whiteRum: false,     // Address 37
-		darkRum: false,      // Address 38
+		cognac: false,      // Address 38
 		whiskey: false,      // Address 39
 		soda: false,         // Address 40
 		coke: false,         // Address 41

@@ -274,9 +274,9 @@
 		onmousedown={handlePressStart}
 		onmouseup={handlePressEnd}
 		onmouseleave={handlePressEnd}
-		ontouchstart|preventDefault|nonpassive={handlePressStart}
-		ontouchend|preventDefault|nonpassive={handlePressEnd}
-		ontouchcancel|preventDefault|nonpassive={handlePressEnd}
+		ontouchstart={handlePressStart}
+		ontouchend={handlePressEnd}
+		ontouchcancel={handlePressEnd}
 		disabled={isProcessing}
 		class="voice-button btn btn-circle btn-xl shadow-xl transition-all duration-200 select-none"
 		class:btn-error={isRecording}

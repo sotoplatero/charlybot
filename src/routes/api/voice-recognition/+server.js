@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import OpenAI from 'openai';
 import { env } from '$env/dynamic/private';
-import { cocktails, ingredientMapping } from '$lib/data/cocktails.js';
+import { cocktails, } from '$lib/data/cocktails.js';
 
 const openai = env.OPENAI_API_KEY ? new OpenAI({
 	apiKey: env.OPENAI_API_KEY
@@ -17,16 +17,10 @@ async function parseVoiceRequestWithGPT(transcript) {
 		// Generate cocktail list dynamically
 		const cocktailList = cocktails.map(c => `- ${c.id} (${c.name})`).join('\n');
 
-		// Generate ingredient list dynamically
-		const ingredientList = Object.keys(ingredientMapping).map(id => `- ${id}`).join('\n');
-
 		const systemPrompt = `You are a bartender prompt-interpreter AI. Your job is to analyze the customer's message and determine what drink they want.
 
 AVAILABLE PREDEFINED COCKTAILS:
 ${cocktailList}
-
-AVAILABLE INGREDIENTS FOR CUSTOM DRINKS (canonical IDs):
-${ingredientList}
 
 RULES:
 

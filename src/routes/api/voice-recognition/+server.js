@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import OpenAI from 'openai';
 import { env } from '$env/dynamic/private';
-import { cocktails, ingredientMapping, ingredientAliases } from '$lib/data/cocktails.js';
+import { cocktails, ingredientMapping } from '$lib/data/cocktails.js';
 
 const openai = env.OPENAI_API_KEY ? new OpenAI({
 	apiKey: env.OPENAI_API_KEY
@@ -20,11 +20,6 @@ async function parseVoiceRequestWithGPT(transcript) {
 		// Generate ingredient list dynamically
 		const ingredientList = Object.keys(ingredientMapping).map(id => `- ${id}`).join('\n');
 
-		// Generate alias mapping dynamically
-		const aliasMapping = Object.entries(ingredientAliases)
-			.map(([id, aliases]) => `- ${id}: ${aliases.join(', ')}`)
-			.join('\n');
-
 		const systemPrompt = `You are a bartender prompt-interpreter AI. Your job is to analyze the customer's message and determine what drink they want.
 
 AVAILABLE PREDEFINED COCKTAILS:
@@ -32,9 +27,6 @@ ${cocktailList}
 
 AVAILABLE INGREDIENTS FOR CUSTOM DRINKS (canonical IDs):
 ${ingredientList}
-
-ALIAS MAPPING:
-${aliasMapping}
 
 RULES:
 
@@ -54,7 +46,6 @@ RULES:
 
    For custom drinks:
    - Extract ONLY ingredients from the AVAILABLE INGREDIENTS list.
-   - Map aliases to canonical IDs.
    - Ignore any ingredient not in the available list.
    - Return: {"type": "custom", "ingredients": ["…", "…"]}
 

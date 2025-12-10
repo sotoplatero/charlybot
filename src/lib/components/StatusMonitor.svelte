@@ -1,21 +1,23 @@
 <script>
 	import { cocktailStatus, stopStatusPolling } from '$lib/stores/cocktailStatus.js';
 	import ProgressIndicator from './ProgressIndicator.svelte';
-	import { Bot, XCircle, Circle, Loader2, CheckCircle } from '@lucide/svelte';
+	import { Bot, XCircle, Circle, Loader2, CheckCircle, X, Maximize2 } from '@lucide/svelte';
 	import { getCocktailById } from '$lib/data/cocktails.js';
 
 	let showModal = $state(false);
+	let modalMinimized = $state(false);
 	let dialogElement = $state(/** @type {HTMLDialogElement | null} */ (null));
 
 	$effect(() => {
-		// Show modal when a cocktail is being prepared
-		if ($cocktailStatus.activeCocktailId && !showModal) {
+		// Show modal when a cocktail is being prepared (only if not minimized)
+		if ($cocktailStatus.activeCocktailId && !showModal && !modalMinimized) {
 			showModal = true;
 		}
 
-		// Close modal when activeCocktailId is cleared (store handles stopping polling)
-		if (showModal && !$cocktailStatus.activeCocktailId) {
+		// Close modal and banner when activeCocktailId is cleared (store handles stopping polling)
+		if (!$cocktailStatus.activeCocktailId) {
 			showModal = false;
+			modalMinimized = false;
 		}
 	});
 
@@ -25,6 +27,29 @@
 			dialogElement.scrollTop = 0;
 		}
 	});
+
+	function closeModal() {
+		showModal = false;
+		modalMinimized = true;
+	}
+
+	function openModal() {
+		modalMinimized = false;
+		showModal = true;
+	}
+
+	async function cancelPreparation() {
+		try {
+			// Reset addresses to stop the preparation
+			await fetch('/api/reset-addresses', { method: 'POST' });
+			console.log('[StatusMonitor] Preparation cancelled, addresses reset');
+
+			// Stop polling and clear active cocktail
+			stopStatusPolling();
+		} catch (error) {
+			console.error('[StatusMonitor] Failed to cancel preparation:', error);
+		}
+	}
 
 	/** @returns {import('$lib/data/cocktails.js').Cocktail | undefined} */
 	function getCurrentCocktail() {
@@ -75,9 +100,46 @@
 	});
 </script>
 
+<!-- Banner when modal is minimized -->
+{#if modalMinimized && $cocktailStatus.activeCocktailId}
+	<div class="fixed top-0 left-0 right-0 z-50 bg-cyan-600 text-white shadow-lg" style="animation: slideDown 0.3s ease-out;">
+		<div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+			<div class="flex items-center gap-3">
+				<Loader2 class="w-5 h-5 animate-spin" />
+				<span class="font-semibold">Preparing {getCurrentCocktail()?.name || 'cocktail'}...</span>
+			</div>
+			<div class="flex items-center gap-2">
+				<button
+					onclick={openModal}
+					class="btn btn-sm bg-white/20 hover:bg-white/30 border-0 text-white"
+					aria-label="Show details"
+				>
+					<Maximize2 class="w-4 h-4" />
+					Details
+				</button>
+				<button
+					onclick={cancelPreparation}
+					class="btn btn-sm bg-red-600 hover:bg-red-700 border-0 text-white"
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
+
 {#if showModal}
 <dialog bind:this={dialogElement} class="modal modal-open overflow-y-auto items-start" style="animation: fadeIn 0.3s ease-out;">
 	<div class="modal-box max-w-3xl w-full max-h-none my-8 bg-white border-4 border-cyan-200 shadow-2xl" style="animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+		<!-- Close Button -->
+		<button
+			onclick={closeModal}
+			class="absolute top-4 right-4 btn btn-sm btn-circle btn-ghost hover:bg-gray-200"
+			aria-label="Close modal"
+		>
+			<X class="w-5 h-5" />
+		</button>
+
 		<!-- Compact Header -->
 		<div class="flex flex-col gap-4 mb-8 pb-6 border-b-2 ">
 			<div class="flex items-center gap-4">
@@ -162,3 +224,16 @@
 	</form>
 </dialog>
 {/if}
+
+<style>
+	@keyframes slideDown {
+		from {
+			transform: translateY(-100%);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+</style>

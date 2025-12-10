@@ -278,18 +278,18 @@
 		ontouchend={handlePressEnd}
 		ontouchcancel={handlePressEnd}
 		disabled={isProcessing}
-		class="voice-button btn btn-circle btn-xl shadow-xl transition-all duration-200 select-none"
+		class="voice-button btn btn-circle shadow-2xl transition-all duration-200 select-none w-24 h-24"
 		class:btn-error={isRecording}
 		class:btn-primary={!isRecording && !isProcessing}
 		class:btn-disabled={isProcessing}
 		class:scale-110={isRecording}
 	>
 		{#if isProcessing}
-			<Loader2 class="w-6 h-6 animate-spin" />
+			<Loader2 class="w-10 h-10 animate-spin" />
 		{:else if isRecording}
-			<MicOff class="w-6 h-6" />
+			<MicOff class="w-10 h-10" />
 		{:else}
-			<Mic class="w-6 h-6" />
+			<Mic class="w-10 h-10" />
 		{/if}
 	</button>
 

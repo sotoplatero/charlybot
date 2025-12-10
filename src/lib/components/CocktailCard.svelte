@@ -23,8 +23,9 @@
 		<img
 			src={cocktail.imageUrl}
 			alt={cocktail.name}
-			class="w-full h-full object-cover transition-transform duration-700 ease-out aspect-square"
+			class="w-full h-full object-cover transition-transform duration-700 ease-out aspect-square select-none pointer-events-none"
 			class:scale-110={isHovered}
+			draggable="false"
 		/>
 		<!-- Gradient overlay -->
 		<div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-800/40 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-300"></div>
@@ -46,3 +47,10 @@
 		<div class="absolute top-6 right-6 w-16 h-16 border-t-4 border-r-4 border-cyan-300 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 	</figure>
 </button>
+
+<style>
+	img {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+	}
+</style>

@@ -27,32 +27,39 @@ async function parseVoiceRequestWithGPT(transcript) {
 AVAILABLE PREDEFINED COCKTAILS:
 ${cocktailList}
 
-AVAILABLE INGREDIENTS: 
+AVAILABLE INGREDIENTS:
 ${ingredientList}
 
-RULES:
+CRITICAL RULES (READ CAREFULLY):
 
-1. PREDEFINED COCKTAIL
-   If the customer mentions any predefined cocktail (even inside a longer sentence), return:
-   {"type": "predefined", "cocktailId": "<id>"}
+1. PREDEFINED COCKTAIL - ONLY if explicitly named
+   Return predefined ONLY if the customer explicitly mentions the EXACT NAME of a predefined cocktail:
+   - "I want a mojito" ✓
+   - "give me a cuba libre" ✓
+   - "make me a whiskey sour" ✓
 
-2. PREDEFINED + EXTRA INGREDIENTS
-   If the customer mentions a predefined cocktail and also mentions additional ingredients, ALWAYS ignore the extras.
-   Always return ONLY the predefined cocktail.
+   Return: {"type": "predefined", "cocktailId": "<id>"}
 
-3. CUSTOM COCKTAIL
-   Triggered when:
-   - The customer explicitly wants a "coctel", "cocktail", "trago", "drink", "mezcla", "mi propio coctel", etc.
-   AND
-   - They do NOT mention a predefined cocktail.
+2. CUSTOM COCKTAIL - When ingredients are mentioned
+   Return custom if the customer mentions ingredients WITHOUT explicitly naming a predefined cocktail:
+   - "rum and coke" → {"type": "custom", "ingredients": ["white-rum", "coke"]}
+   - "whiskey with ice" → {"type": "custom", "ingredients": ["whiskey", "ice"]}
+   - "give me white rum and soda" → {"type": "custom", "ingredients": ["white-rum", "soda"]}
+   - "I want a drink with whiskey and coca cola" → {"type": "custom", "ingredients": ["whiskey", "coke"]}
 
-   For custom drinks:
-   - Extract ONLY ingredients from the AVAILABLE INGREDIENTS list.
-   - Ignore any ingredient not in the available list.
-   - Return: {"type": "custom", "ingredients": ["…", "…"]}
+   IMPORTANT: Even if the ingredients match a predefined cocktail (like cuba-libre),
+   if the customer did NOT explicitly say the cocktail name, return CUSTOM.
+
+3. IGNORE TRIGGER WORDS
+   These words alone don't mean custom, they're just natural language:
+   - "cocktail", "drink", "beverage", "mix"
+
+   What matters is whether they mention:
+   - COCKTAIL NAME → predefined
+   - INGREDIENTS → custom
 
 4. UNCLEAR / NO MATCH
-   If you cannot clearly identify a predefined cocktail or at least one valid ingredient for a custom cocktail, return:
+   If you cannot identify a predefined cocktail name OR valid ingredients, return:
    {"type": "none"}
 
 STRICT OUTPUT RULE:
@@ -60,13 +67,18 @@ Return ONLY a JSON object.
 No text, no markdown, no comments, no explanations.
 
 EXAMPLES:
-- "quiero un mojito" → {"type": "predefined", "cocktailId": "mojito"}
-- "mojito con whiskey extra" → {"type": "predefined", "cocktailId": "mojito"}
-- "hazme un coctel con menta, hielo y ron blanco" → {"type": "custom", "ingredients": ["mint", "ice", "white-rum"]}
-- "dame un trago con whiskey y coca cola" → {"type": "custom", "ingredients": ["whiskey", "coke"]}
-- "quiero inventar un coctel con hielo, lima y soda" → {"type": "custom", "ingredients": ["ice", "lime", "soda"]}
-- "hazme un coctel con vodka y naranja" → {"type": "custom", "ingredients": []}
-- "no se que pedir" → {"type": "none"}
+- "I want a mojito" → {"type": "predefined", "cocktailId": "mojito"}
+- "give me a cuba libre" → {"type": "predefined", "cocktailId": "cuba-libre"}
+- "rum and coke" → {"type": "custom", "ingredients": ["white-rum", "coke"]}
+- "white rum and coke" → {"type": "custom", "ingredients": ["white-rum", "coke"]}
+- "whiskey with ice" → {"type": "custom", "ingredients": ["whiskey", "ice"]}
+- "give me a drink with whiskey and coke" → {"type": "custom", "ingredients": ["whiskey", "coke"]}
+- "I want a cocktail with mint, ice and white rum" → {"type": "custom", "ingredients": ["mint", "ice", "white-rum"]}
+- "make me a cocktail with lime and soda" → {"type": "custom", "ingredients": ["lime", "soda"]}
+- "cognac with ice" → {"type": "custom", "ingredients": ["cognac", "ice"]}
+- "mojito with extra whiskey" → {"type": "predefined", "cocktailId": "mojito"}
+- "I want vodka with orange" → {"type": "custom", "ingredients": []}
+- "I don't know what to order" → {"type": "none"}
 `;
 
 		const completion = await openai.chat.completions.create({

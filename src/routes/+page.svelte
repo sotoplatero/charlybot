@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { cocktails } from '$lib/data/cocktails.js';
-	import { startStatusPolling, initializeSSE } from '$lib/stores/cocktailStatus.js';
+	import { startStatusPolling, startBackgroundPolling } from '$lib/stores/cocktailStatus.js';
 	import CocktailCard from '$lib/components/CocktailCard.svelte';
 	import CustomCocktailCard from '$lib/components/CustomCocktailCard.svelte';
 	import CustomCocktailModal from '$lib/components/CustomCocktailModal.svelte';
@@ -48,9 +48,9 @@
 
 	// Run initial state check when component mounts
 	onMount(() => {
-		// Initialize Server-Sent Events for real-time notifications
-		// This will notify us instantly when preparations start/complete
-		initializeSSE();
+		// Start background polling to detect when robot becomes busy
+		// This allows auto-opening modal when someone else orders a drink
+		startBackgroundPolling();
 
 		// Check initial robot state (existing functionality)
 		checkInitialState();

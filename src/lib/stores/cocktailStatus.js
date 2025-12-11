@@ -55,140 +55,82 @@ export const cocktailStatus = writable({
 /** @type {number | null} */
 let pollingInterval = null;
 
+/** @type {number | null} */
+let backgroundPollingInterval = null;
+
 /** @type {boolean} */
 let resetTriggered = false;
 
-/** @type {EventSource | null} */
-let eventSource = null;
-
-/** @type {boolean} */
-let sseConnected = false;
-
 /**
- * Connect to Server-Sent Events for real-time updates
- * Falls back to polling if SSE is not available
+ * Background polling to detect when robot becomes busy
+ * This runs ALWAYS in the background, even when no cocktail is being prepared
+ * Allows auto-opening modal when someone else orders a drink
  */
-function connectSSE() {
-	// Don't connect if already connected
-	if (eventSource && sseConnected) {
-		console.log('[SSE] Already connected');
+export function startBackgroundPolling() {
+	// Don't start if already running
+	if (backgroundPollingInterval) {
+		console.log('[Background] Polling already active');
 		return;
 	}
 
-	// Clean up existing connection
-	disconnectSSE();
+	console.log('[Background] Starting background polling...');
 
-	try {
-		console.log('[SSE] Connecting to /api/events...');
-		eventSource = new EventSource('/api/events');
+	// Poll every 8 seconds to check if robot is busy
+	backgroundPollingInterval = setInterval(async () => {
+		try {
+			// Get current state
+			let currentState;
+			cocktailStatus.subscribe(state => {
+				currentState = state;
+			})();
 
-		eventSource.addEventListener('connected', (event) => {
-			console.log('[SSE] Connected successfully');
-			sseConnected = true;
-		});
-
-		eventSource.addEventListener('preparation_started', (event) => {
-			const data = JSON.parse(event.data);
-			console.log('[SSE] Preparation started event received:', data);
-
-			// If we receive a preparation_started event and we're not tracking it yet,
-			// start tracking it automatically
-			if (data.cocktailId) {
-				cocktailStatus.update(state => {
-					// Only update if we're not already tracking this cocktail
-					if (!state.activeCocktailId || state.activeCocktailId !== data.cocktailId) {
-						console.log(`[SSE] Auto-starting tracking for ${data.cocktailId}`);
-						// Start polling for this cocktail
-						// We do this in a setTimeout to avoid race conditions
-						setTimeout(() => startStatusPolling(data.cocktailId), 0);
-					}
-					return state;
-				});
+			// If we already have an active cocktail, skip background check
+			// (the main polling is handling it)
+			if (currentState.activeCocktailId) {
+				return;
 			}
-		});
 
-		eventSource.addEventListener('state_update', (event) => {
-			const data = JSON.parse(event.data);
-			// Only update store if we have an active cocktail
-			cocktailStatus.update(state => {
-				if (state.activeCocktailId) {
-					return {
-						...state,
-						robotState: data.robotState,
-						isConnected: true,
-						progress: calculateProgress(data.robotState, state.activeCocktailId, state.customIngredients),
-						error: null
-					};
-				}
-				return state;
+			// Fetch current robot state
+			const response = await fetch('/api/status', {
+				signal: AbortSignal.timeout(6000)
 			});
-		});
 
-		eventSource.addEventListener('drink_ready', async (event) => {
-			console.log('[SSE] Drink ready event received');
+			if (!response.ok) {
+				return; // Silently fail for background polling
+			}
 
-			// Trigger reset if not already triggered
-			if (!resetTriggered) {
-				console.log('[SSE] Triggering reset from drink_ready event...');
-				resetTriggered = true;
-				try {
-					await fetch('/api/reset-addresses', { method: 'POST' });
-					console.log('[SSE] Reset triggered successfully');
-				} catch (resetError) {
-					console.error('[SSE] Failed to trigger reset:', resetError);
+			const data = await response.json();
+
+			// Check if robot is busy (waitingRecipe = false means busy)
+			if (data.robotState.waitingRecipe === false) {
+				console.log('[Background] Robot is busy! Detecting active cocktail...');
+
+				// Fetch which cocktail is active
+				const initialStateResponse = await fetch('/api/initial-state');
+				const initialStateData = await initialStateResponse.json();
+
+				if (initialStateData.activeCocktailId) {
+					console.log(`[Background] Auto-detected preparation: ${initialStateData.activeCocktailId}`);
+					// Auto-start monitoring this cocktail
+					startStatusPolling(initialStateData.activeCocktailId);
 				}
 			}
-		});
 
-		eventSource.addEventListener('robot_ready', (event) => {
-			console.log('[SSE] Robot ready event received');
-
-			// Only stop if reset was triggered (meaning preparation completed)
-			if (resetTriggered) {
-				console.log('[SSE] Stopping polling and closing modal');
-				stopStatusPolling();
-			}
-		});
-
-		eventSource.addEventListener('error', (event) => {
-			console.error('[SSE] Connection error');
-			sseConnected = false;
-
-			// Don't try to reconnect immediately, let the browser handle reconnection
-			// or fall back to polling
-		});
-
-		eventSource.onerror = (error) => {
-			console.error('[SSE] EventSource error:', error);
-			sseConnected = false;
-		};
-
-	} catch (error) {
-		console.error('[SSE] Failed to create EventSource:', error);
-		sseConnected = false;
-		eventSource = null;
-	}
+		} catch (error) {
+			// Silently fail for background polling to avoid spam
+			// Background polling should not interfere with user experience
+		}
+	}, 8000); // Check every 8 seconds
 }
 
 /**
- * Disconnect from Server-Sent Events
+ * Stop background polling
  */
-function disconnectSSE() {
-	if (eventSource) {
-		console.log('[SSE] Disconnecting');
-		eventSource.close();
-		eventSource = null;
-		sseConnected = false;
-	}
-}
-
-/**
- * Initialize SSE connection (call this on app load)
- */
-export function initializeSSE() {
-	// Only connect in browser environment
-	if (typeof window !== 'undefined') {
-		connectSSE();
+export function stopBackgroundPolling() {
+	if (backgroundPollingInterval) {
+		console.log('[Background] Stopping background polling');
+		clearInterval(backgroundPollingInterval);
+		backgroundPollingInterval = null;
 	}
 }
 
@@ -213,13 +155,6 @@ export function startStatusPolling(cocktailId, customIngredients = null) {
 	}
 
 	console.log(`[Status] Starting polling for ${cocktailId}`);
-
-	// HYBRID APPROACH: SSE notifies us of state changes instantly,
-	// but we maintain polling during active preparation for smooth progress updates
-	// This ensures:
-	// - SSE provides instant notifications when preparation starts/ends
-	// - Polling provides smooth progress bar updates during preparation
-	// - If SSE fails, polling acts as complete fallback (existing functionality)
 
 	// Poll every 3000ms (reduced frequency to avoid Modbus conflicts)
 	pollingInterval = setInterval(async () => {
